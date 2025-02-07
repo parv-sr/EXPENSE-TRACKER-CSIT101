@@ -1,4 +1,7 @@
 import mysql.connector as sql
+from tkinter import messagebox
+import __main__ as m
+
 
 
 connection = sql.connect(
@@ -79,6 +82,9 @@ def deleteQuery():
     cursor.execute(delete_query, (remve))
     connection.commit()
     print("Deletion Succesful.")
+
+
+
 
 
 def displaySum():

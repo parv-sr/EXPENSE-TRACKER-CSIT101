@@ -101,7 +101,6 @@ def open_new_window():
     ttk.Button(new_window, text="Save", command = lambda: (saveDetails(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
 
-    
 def deleteRecord():
     selected_item = tview.focus()
     if not selected_item:
@@ -118,8 +117,7 @@ def deleteRecord():
 
             messagebox.showinfo("Success", f"Record ID {exp_id} deleted successfully.")
         except Exception as e:
-            messagebox.showerror("Error", "An error occured")
-            
+            messagebox.showerror("Error", "An error occured")    
 
 
 lbl_total_budget = tk.Label(frame1, text=f"Total Budget: {budget}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
@@ -162,6 +160,29 @@ tview.column('category', width=100, anchor='center')
 tview.column('amount', width=100, anchor='center')
 tview.column('checkbox', width=50, anchor='center')
 
+
+def deleteRecord():
+    selected_item = tview.focus()
+    if not selected_item:
+        messagebox.showwarning("Warning!", "No record selected!")
+        return
+    values = tview.item(selected_item, 'values')
+    exp_id = values[0]
+
+    if messagebox.askyesno("Confirm deletion", f"Are you sure you want to delete record ID {exp_id}"):
+        try:
+            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = ?", [exp_id])
+            connection.commit()
+            tview.delete(selected_item)
+
+            messagebox.showinfo("Success", f"Record ID {exp_id} deleted successfully.")
+        except Exception as e:
+            messagebox.showerror("Error", "An error occured")
+
+
+
+
+
 for record in dtbcount:
     tview.insert(parent='', index='end', values=(record[0], record[1], record[2], record[3], "☐"))
 
@@ -180,3 +201,5 @@ tview.bind("<Button-1>", toggle_row_selection)
 
 
 root.mainloop()
+
+input("Press Enter to exit...")
