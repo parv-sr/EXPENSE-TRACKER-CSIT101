@@ -106,18 +106,20 @@ def deleteRecord():
     if not selected_item:
         messagebox.showwarning("Warning!", "No record selected!")
         return
+    
     values = tview.item(selected_item, 'values')
-    exp_id = values[0]
+    exp_id = values[0]  # Ensure this is the primary key
 
-    if messagebox.askyesno("Confirm deletion", f"Are you sure you want to delete record ID {exp_id}"):
+    if messagebox.askyesno("Confirm deletion", f"Are you sure you want to delete record ID {exp_id}?"):
         try:
-            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = ?", (exp_id))
+            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = %s", (exp_id,))  # Fix SQL syntax
             connection.commit()
-            tview.delete(selected_item)
+            tview.delete(selected_item)  # Remove from Treeview
 
             messagebox.showinfo("Success", f"Record ID {exp_id} deleted successfully.")
         except Exception as e:
-            messagebox.showerror("Error", "An error occured")    
+            messagebox.showerror("Error", f"An error occurred: {e}")  # Show actual error
+   
 
 
 lbl_total_budget = tk.Label(frame1, text=f"Total Budget: {budget}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
@@ -161,23 +163,7 @@ tview.column('amount', width=100, anchor='center')
 tview.column('checkbox', width=50, anchor='center')
 
 
-def deleteRecord():
-    selected_item = tview.focus()
-    if not selected_item:
-        messagebox.showwarning("Warning!", "No record selected!")
-        return
-    values = tview.item(selected_item, 'values')
-    exp_id = values[0]
 
-    if messagebox.askyesno("Confirm deletion", f"Are you sure you want to delete record ID {exp_id}"):
-        try:
-            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = ?", [exp_id])
-            connection.commit()
-            tview.delete(selected_item)
-
-            messagebox.showinfo("Success", f"Record ID {exp_id} deleted successfully.")
-        except Exception as e:
-            messagebox.showerror("Error", "An error occured")
 
 
 
