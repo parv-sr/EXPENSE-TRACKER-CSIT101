@@ -27,7 +27,7 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#454746")
 frame1.pack(fill="both", expand=True)
 
-budget = (10000)
+budget = (69696969)
 ex = crud.displaySum()
 
 
@@ -35,8 +35,16 @@ for i in range(6):
     frame1.columnconfigure(i, weight=1)
     frame1.rowconfigure(1, weight=1)  
 
+def refresh_treeview():
+    for row in tview.get_children():
+        tview.delete(row)
+    crud.cursor.execute("SELECT * FROM expenses")
+    rows = crud.cursor.fetchall()
+    for row in rows:
+        tview.insert("", "end", values = row)
 
-def open_new_window():
+
+def open_new_window_addrecord():
     new_window = tk.Toplevel(root, bg="#454746")
     new_window.title("Add New Record")
     new_window.geometry("300x200")
@@ -69,7 +77,6 @@ def open_new_window():
     amount_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
     amount_entry.grid(row=4, column=1, padx=10, pady=5)
 
-
     
     def saveDetails():
 
@@ -96,6 +103,8 @@ def open_new_window():
         except Exception as e:
             print(f"Error while adding record: {e}")
 
+        refresh_treeview()
+
 
 
     ttk.Button(new_window, text="Save", command = lambda: (saveDetails(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
@@ -108,17 +117,18 @@ def deleteRecord():
         return
     
     values = tview.item(selected_item, 'values')
-    exp_id = values[0]  # Ensure this is the primary key
+    exp_id = values[0] 
 
     if messagebox.askyesno("Confirm deletion", f"Are you sure you want to delete record ID {exp_id}?"):
         try:
-            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = %s", (exp_id,))  # Fix SQL syntax
+            crud.cursor.execute("DELETE FROM expenses WHERE exp_id = %s", (exp_id,))  
             connection.commit()
-            tview.delete(selected_item)  # Remove from Treeview
+            tview.delete(selected_item)  
+            refresh_treeview()
 
             messagebox.showinfo("Success", f"Record ID {exp_id} deleted successfully.")
         except Exception as e:
-            messagebox.showerror("Error", f"An error occurred: {e}")  # Show actual error
+            messagebox.showerror("Error", f"An error occurred: {e}")  
    
 
 
@@ -131,7 +141,7 @@ lbl_remaining_budget.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
 lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
 lbl_total_expense.grid(row=0, column=2, padx=5, pady=5, sticky="nsew")
 
-btn_add_record = tk.Button(frame1, text="+", font=("Arial", 14), bg="#1f1f1f", fg="white", command=open_new_window)  #add button calls crud.insertQuery()
+btn_add_record = tk.Button(frame1, text="+", font=("Arial", 14), bg="#1f1f1f", fg="white", command=open_new_window_addrecord)  #add button calls crud.insertQuery()
 btn_add_record.grid(row=0, column=3, padx=5, pady=5, sticky="nsew")
 
 btn_delete_record = tk.Button(frame1, text="\U0001F5D1", font=("Arial", 14), bg="#1f1f1f", fg="white", command = deleteRecord)   #delete button calls crud.deleteQuery()
@@ -160,13 +170,7 @@ tview.column('id', width=100, anchor='center')
 tview.column('date', width=100, anchor='center')    
 tview.column('category', width=100, anchor='center')
 tview.column('amount', width=100, anchor='center')
-tview.column('checkbox', width=50, anchor='center')
-
-
-
-
-
-
+tview.column('checkbox', width=50, anchor='center') 
 
 
 for record in dtbcount:
