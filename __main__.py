@@ -27,7 +27,7 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#454746")
 frame1.pack(fill="both", expand=True)
 
-budget = (69696969)
+budget = (0)
 ex = crud.displaySum()
 
 
