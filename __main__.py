@@ -110,6 +110,31 @@ def open_new_window_addrecord():
     ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
 
+def update_budget():
+    def save_budget():
+        nonlocal new_budget_entry
+        try:
+            new_budget = int(new_budget_entry.get()) 
+            if new_budget <= 0:
+                raise ValueError("Budget must be greater than 0")
+            global budget
+            budget = new_budget 
+            lbl_remaining_budget.config(text=f"Remaining Budget: {budget - ex}")
+            btn_total_budget.config(text=f"Total Budget: {budget}")
+            new_window.destroy()
+        except ValueError:
+            messagebox.showerror("Invalid Input", "Please enter a valid positive integer for the budget.")
+
+    new_window = tk.Toplevel(root, bg="#454746")
+    new_window.title("Set Budget")
+    new_window.geometry("300x150")
+
+    ttk.Label(new_window, text="Enter New Budget:", background="#454746", foreground="white").grid(row=0, column=0, padx=20, pady=20, sticky="w")
+    new_budget_entry = ttk.Entry(new_window, width=20)
+    new_budget_entry.grid(row=0, column=1, padx=10, pady=20)
+
+    ttk.Button(new_window, text="Save", command=save_budget).grid(row=1, column=0, columnspan=2, pady=10)
+
 def deleteRecord():
     selected_item = tview.focus()
     if not selected_item:
@@ -241,8 +266,8 @@ def open_new_window_editrecord():
    
 
 
-lbl_total_budget = tk.Label(frame1, text=f"Total Budget: {budget}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
-lbl_total_budget.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
+btn_total_budget.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
 
 lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
 lbl_remaining_budget.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
