@@ -48,12 +48,9 @@ def updateData():
 
     def updateData_setCategory():
         update_query = "UPDATE expenses set expenses = %s WHERE category = %s"
-        id = int(input("Enter the serial number of entry: "))
-        new_exp = int(input("Enter the correct expense: "))
-
-        cursor.execute(update_query, (new_exp, id))
+        
+        cursor.execute(update_query)
         connection.commit()
-        print(f"{id}th expense changed to {new_exp}.")
 
     def updateData_setDate():
         update_query = "UPDATE expenses set expenses = %s WHERE date = %s"
@@ -64,7 +61,7 @@ def updateData():
         connection.commit()
         print(f"{id}th expense changed to {new_exp}.")
 
-    def updateData_setid():
+    def updateData_setexpense():
         update_query = "UPDATE expenses set expenses = %s WHERE exp_id = %s"
         id = int(input("Enter the serial number of entry: "))
         new_exp = int(input("Enter the correct expense: "))
