@@ -27,8 +27,8 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#1E1E2E")
 frame1.pack(fill="both", expand=True)
 
-budget = (0)
-ex = crud.displaySum()
+budget = crud.displaySum_budget()
+ex = crud.displaySum_expenses()
 
 
 for i in range(6):
