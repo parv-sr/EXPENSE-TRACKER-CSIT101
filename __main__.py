@@ -112,6 +112,7 @@ def open_new_window_addrecord():
 def update_budget():
     
     def save_budget():
+        
         nonlocal new_budget_entry
         try:
             new_budget = int(new_budget_entry.get()) 
@@ -121,7 +122,7 @@ def update_budget():
             budget = new_budget 
 
             try:
-                query = "UPDATE budget SET budget = %s WHERE exp_id = 1"
+                query = "UPDATE expenses SET budget = %s WHERE exp_id = 1"
                 crud.cursor.execute(query, (budget,))
                 crud.connection.commit()
             except Exception as e:
@@ -202,7 +203,7 @@ def open_new_window_editrecord():
     def updateData():
    
         selected_item = tview.focus()
-
+      
         if not selected_item:
             print("Error: No record selected!")
             return
@@ -225,6 +226,8 @@ def open_new_window_editrecord():
         if edit_data["expenses"] <= 0:
             print("Error: Amount must be greater than 0.")
             return
+        
+        print("xxxxxxxxxxxxxxxxxxxx")
 
         try:
             # Update the existing record in the database
@@ -271,7 +274,7 @@ def open_new_window_editrecord():
 
 
 
-    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_edit(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
+    ttk.Button(new_window, text="Save", command = lambda: (updateData(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
    
 
@@ -279,7 +282,7 @@ def open_new_window_editrecord():
 btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
-lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Money: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 lbl_remaining_budget.grid(row=0, column=1, sticky="nsew")
 
 lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
@@ -321,16 +324,6 @@ for record in dtbcount:
     tview.insert(parent='', index='end', values=(record[0], record[1], record[2], record[3], "☐"))
 
 
-def toggle_row_selection(event):
-    selected_item = tview.focus()
-    if not selected_item:
-        return
-    
-    values = list(tview.item(selected_item, 'values'))
-    values[4] = "☑" if values[4] == "☐" else "☐"
-    tview.item(selected_item, values=values)
-    
-tview.bind("<Button-1>", toggle_row_selection)
 
 
 
