@@ -45,37 +45,36 @@ def refresh_treeview():
 
 
 def open_new_window_addrecord():
-    new_window = tk.Toplevel(root, bg="#454746")
+    new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Add New Record")
-    new_window.geometry("300x200")
+    new_window.geometry("320x250")
 
-    def validate_integer_input(int_val_amt):   #this functions allows for strictly integer input
+    def validate_integer_input(int_val_amt):  # This function allows for strictly integer input
         if int_val_amt == "":
             return True
         return int_val_amt.isdigit()
-    
+
     vcmd = (new_window.register(validate_integer_input), "%P")
 
-    ttk.Label(new_window, text="Enter Details").grid(row=0, padx=10, pady=5, columnspan=2)
+    ttk.Label(new_window, text="Enter Details", font=("Segoe UI", 14, "bold"), background="#1E1E2E", foreground="#98FF98").grid(row=0, column=0, columnspan=2, pady=10)
 
-    ttk.Label(new_window, text="S.No.: ").grid(row=1, column=0, padx=20, pady=5, sticky="w")
-    sno_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    sno_entry.grid(row=1, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="S.No.:", background="#1E1E2E", foreground="#98FF98").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+    sno_entry = ttk.Entry(new_window, width=22, validate="key", validatecommand=vcmd)
+    sno_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-    ttk.Label(new_window, text="Date: ").grid(row=2, column=0, padx=20, pady=5, sticky="w")
-    date_entry = DateEntry(new_window, width=20)
-    date_entry.grid(row=2, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Date:", background="#1E1E2E", foreground="#98FF98").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    date_entry = DateEntry(new_window, width=19)
+    date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-    ttk.Label(new_window, text="Category:").grid(row=3, column=0, padx=20, pady=5, sticky="w")
+    ttk.Label(new_window, text="Category:", background="#1E1E2E", foreground="#98FF98").grid(row=3, column=0, padx=10, pady=5, sticky="e")
     categories = ["Food", "Travel", "Rent", "Utilities", "Entertainment"]
-    category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=18)
-    category_dropdown.grid(row=3, column=1, padx=10, pady=5)
+    category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=20)
+    category_dropdown.grid(row=3, column=1, padx=10, pady=5, sticky="w")
     category_dropdown.set("Select a category")
 
-
-    ttk.Label(new_window, text="Amount:").grid(row=4, column=0, padx=20, pady=5, sticky="w")
-    amount_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    amount_entry.grid(row=4, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Amount:", background="#1E1E2E", foreground="#98FF98").grid(row=4, column=0, padx=10, pady=5, sticky="e")
+    amount_entry = ttk.Entry(new_window, width=22, validate="key", validatecommand=vcmd)
+    amount_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 
     
     def saveDetails_add():
@@ -135,15 +134,15 @@ def update_budget():
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter a valid positive integer for the budget.")
 
-    new_window = tk.Toplevel(root, bg="#454746")
+    new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Set Budget")
     new_window.geometry("300x150")
 
-    ttk.Label(new_window, text="Enter New Budget:", background="#454746", foreground="white").grid(row=0, column=0, padx=20, pady=20, sticky="w")
+    ttk.Label(new_window, text="Enter New Budget:", background="#1E1E2E", foreground="98FF98", font=("Segoe UI", 14, "bold")).grid(row=0, column=0, padx=20, pady=20, sticky="w")
     new_budget_entry = ttk.Entry(new_window, width=20)
     new_budget_entry.grid(row=0, column=1, padx=10, pady=20)
 
-    ttk.Button(new_window, text="Save", command=save_budget).grid(row=1, column=0, columnspan=2, pady=10)
+    ttk.Button(new_window, text="Save", command=save_budget, background="#1E1E2E", foreground="98FF98", font=("Segoe UI", 14, "bold")).grid(row=1, column=0, columnspan=2, pady=10)
 
 def deleteRecord():
     selected_item = tview.focus()
@@ -169,34 +168,34 @@ def deleteRecord():
 
 
 def open_new_window_editrecord():
-    new_window = tk.Toplevel(root, bg="#454746")
+    new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Edit Existing Record")
-    new_window.geometry("300x200")
+    new_window.geometry("350x250")
 
-    def validate_integer_input(int_val_amt):   #this functions allows for strictly integer input
+    def validate_integer_input(int_val_amt):  # This function allows for strictly integer input
         if int_val_amt == "":
             return True
         return int_val_amt.isdigit()
-    
+
     vcmd = (new_window.register(validate_integer_input), "%P")
 
-    ttk.Label(new_window, text="Enter Details").grid(row=0, padx=10, pady=5, columnspan=2)
+    ttk.Label(new_window, text="Enter Details", font=("Segoe UI", 12, "bold"), background="#1E1E2E", foreground="#FFFFFF").grid(row=0, column=0, columnspan=2, pady=15)
 
-    ttk.Label(new_window, text="Date: ").grid(row=2, column=0, padx=20, pady=5, sticky="w")
-    date_entry = DateEntry(new_window, width=20)
-    date_entry.grid(row=2, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Date:", background="#1E1E2E", foreground="#FFFFFF").grid(row=1, column=0, padx=20, pady=10, sticky="e")
+    date_entry = DateEntry(new_window, width=20, background="#3EB489", foreground="#000000")
+    date_entry.grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
-    ttk.Label(new_window, text="Category:").grid(row=3, column=0, padx=20, pady=5, sticky="w")
+    ttk.Label(new_window, text="Category:", background="#1E1E2E", foreground="#FFFFFF").grid(row=2, column=0, padx=20, pady=10, sticky="e")
     categories = ["Food", "Travel", "Rent", "Utilities", "Entertainment"]
     category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=18)
-    category_dropdown.grid(row=3, column=1, padx=10, pady=5)
+    category_dropdown.grid(row=2, column=1, padx=10, pady=10, sticky="w")
     category_dropdown.set("Select a category")
 
+    ttk.Label(new_window, text="Amount:", background="#1E1E2E", foreground="#FFFFFF").grid(row=3, column=0, padx=20, pady=10, sticky="e")
+    amount_entry = ttk.Entry(new_window, width=20, validate="key", validatecommand=vcmd)
+    amount_entry.grid(row=3, column=1, padx=10, pady=10, sticky="w")
 
-    ttk.Label(new_window, text="Amount:").grid(row=4, column=0, padx=20, pady=5, sticky="w")
-    amount_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    amount_entry.grid(row=4, column=1, padx=10, pady=5)
-
+    ttk.Button(new_window, text="Submit", command=lambda: print("Submit clicked"), width=15).grid(row=4, column=0, columnspan=2, pady=20)
 
 
     def updateData():
