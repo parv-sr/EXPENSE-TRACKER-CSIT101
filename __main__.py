@@ -24,7 +24,7 @@ root = tk.Tk()
 root.title("Expense Tracker")
 root.geometry("1600x900")
 
-frame1 = tk.Frame(root, bg="#454746")
+frame1 = tk.Frame(root, bg="#1E1E2E")
 frame1.pack(fill="both", expand=True)
 
 budget = (0)
@@ -104,13 +104,13 @@ def open_new_window_addrecord():
             print(f"Error while adding record: {e}")
 
         refresh_treeview()
-
-
-
+    
+    
     ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
 
 def update_budget():
+    
     def save_budget():
         nonlocal new_budget_entry
         try:
@@ -119,6 +119,16 @@ def update_budget():
                 raise ValueError("Budget must be greater than 0")
             global budget
             budget = new_budget 
+
+            try:
+                query = "UPDATE budget SET budget = %s WHERE exp_id = 1"
+                crud.cursor.execute(query, (budget,))
+                crud.connection.commit()
+            except Exception as e:
+                messagebox.showerror("Database Error", f"Failed to update budget: {e}")
+                return
+
+
             lbl_remaining_budget.config(text=f"Remaining Budget: {budget - ex}")
             btn_total_budget.config(text=f"Total Budget: {budget}")
             new_window.destroy()
@@ -266,27 +276,27 @@ def open_new_window_editrecord():
    
 
 
-btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
-btn_total_budget.grid(row=0, column=0, padx=5, pady=5, sticky="nsew")
+btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
-lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
-lbl_remaining_budget.grid(row=0, column=1, padx=5, pady=5, sticky="nsew")
+lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_remaining_budget.grid(row=0, column=1, sticky="nsew")
 
-lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Arial", 14), bd=1, relief="solid", bg="#1f1f1f", fg="white")
-lbl_total_expense.grid(row=0, column=2, padx=5, pady=5, sticky="nsew")
+lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_total_expense.grid(row=0, column=2, sticky="nsew")
 
-btn_add_record = tk.Button(frame1, text="+", font=("Arial", 14), bg="#1f1f1f", fg="white", command=open_new_window_addrecord)  #add button calls crud.insertQuery()
-btn_add_record.grid(row=0, column=3, padx=5, pady=5, sticky="nsew")
+btn_add_record = tk.Button(frame1, text="+", font=("Segoe UI", 14, "bold"), bg="#1E1E2E", fg="#3EB489", command=open_new_window_addrecord)  #add button calls crud.insertQuery()
+btn_add_record.grid(row=0, column=3, sticky="nsew")
 
-btn_delete_record = tk.Button(frame1, text="\U0001F5D1", font=("Arial", 14), bg="#1f1f1f", fg="white", command = deleteRecord)   #delete button calls crud.deleteQuery()
-btn_delete_record.grid(row=0, column=4, padx=5, pady=5, sticky="nsew")
+btn_delete_record = tk.Button(frame1, text="\U0001F5D1", font=("Segoe UI", 14, "bold"), bg="#1E1E2E", fg="#3EB489", command = deleteRecord)   #delete button calls crud.deleteQuery()
+btn_delete_record.grid(row=0, column=4, sticky="nsew")
 
-btn_edit_record = tk.Button(frame1, text="Edit", font=("Arial", 14), bg="#1f1f1f", fg="white", command=open_new_window_editrecord)   #edit button in the main gui calls crud.updateQuery()
-btn_edit_record.grid(row=0, column=5, padx=5, pady=5, sticky="nsew")
+btn_edit_record = tk.Button(frame1, text="Edit", font=("Segoe UI", 14, "bold"), bg="#1E1E2E", fg="#3EB489", command=open_new_window_editrecord)   #edit button in the main gui calls crud.updateQuery()
+btn_edit_record.grid(row=0, column=5, sticky="nsew")
 
 # Treeview
-tview = ttk.Treeview(frame1, columns=('id', 'date', 'category', 'amount', 'checkbox'), show='headings')
-tview.grid(row=1, column=0, columnspan=6, sticky="nsew", padx=10, pady=10)
+tview = ttk.Treeview(frame1, columns=('I.D.', 'Date', 'Category', 'Amount', 'Checkbox'), show='headings')
+tview.grid(row=1, column=0, columnspan=6, sticky="nsew")
 
 
 scrollbar = ttk.Scrollbar(frame1, orient=tk.VERTICAL, command=tview.yview)
@@ -294,17 +304,17 @@ scrollbar.grid(row=1, column=6, sticky="ns")
 tview.configure(yscrollcommand=scrollbar.set)
 
 
-tview.heading('id', text='Expense ID')
-tview.heading('date', text='Date')
-tview.heading('category', text='Category')
-tview.heading('amount', text='Amount')
-tview.heading('checkbox', text='Select')
+tview.heading('I.D.', text='Expense ID')
+tview.heading('Date', text='Date')
+tview.heading('Category', text='Category')
+tview.heading('Amount', text='Amount')
+tview.heading('Checkbox', text='Select')
 
-tview.column('id', width=100, anchor='center')
-tview.column('date', width=100, anchor='center')    
-tview.column('category', width=100, anchor='center')
-tview.column('amount', width=100, anchor='center')
-tview.column('checkbox', width=50, anchor='center') 
+tview.column('I.D.', width=100, anchor='center')
+tview.column('Date', width=100, anchor='center')    
+tview.column('Category', width=100, anchor='center')
+tview.column('Amount', width=100, anchor='center')
+tview.column('Checkbox', width=50, anchor='center') 
 
 
 for record in dtbcount:
