@@ -298,7 +298,7 @@ btn_edit_record = tk.Button(frame1, text="Edit", font=("Segoe UI", 14, "bold"), 
 btn_edit_record.grid(row=0, column=5, sticky="nsew")
 
 # Treeview
-tview = ttk.Treeview(frame1, columns=('I.D.', 'Date', 'Category', 'Amount', 'Checkbox'), show='headings')
+tview = ttk.Treeview(frame1, columns=('I.D.', 'Date', 'Category', 'Amount'), show='headings')
 tview.grid(row=1, column=0, columnspan=6, sticky="nsew")
 
 
@@ -311,13 +311,13 @@ tview.heading('I.D.', text='Expense ID')
 tview.heading('Date', text='Date')
 tview.heading('Category', text='Category')
 tview.heading('Amount', text='Amount')
-tview.heading('Checkbox', text='Select')
 
-tview.column('I.D.', width=100, anchor='center')
+
+tview.column('I.D.', width=50, anchor='center')
 tview.column('Date', width=100, anchor='center')    
 tview.column('Category', width=100, anchor='center')
-tview.column('Amount', width=100, anchor='center')
-tview.column('Checkbox', width=50, anchor='center') 
+tview.column('Amount', width=200, anchor='center')
+
 
 
 for record in dtbcount:
