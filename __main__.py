@@ -3,7 +3,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from tkcalendar import DateEntry
 import mysql.connector as sql
-import crud 
+import crud                         #crud.py which includes all the database operations
 
 # Database connection
 connection = sql.connect(
@@ -30,7 +30,7 @@ frame1.pack(fill="both", expand=True)
 style = ttk.Style()
 style.configure("TButton", background="#1E1E2E", foreground="#98FF98", font=("Segoe UI", 14, "bold"))
 
-budget = crud.displaySum_budget()
+budget = crud.displaySum_budget()         #crud functions update dynamically as the database is updated
 ex = crud.displaySum_expenses()
 
 
@@ -38,7 +38,7 @@ for i in range(6):
     frame1.columnconfigure(i, weight=1)
     frame1.rowconfigure(1, weight=1)  
 
-def refresh_treeview():
+def refresh_treeview():                   #updates the treeview and labels after each operation
     for row in tview.get_children():
         tview.delete(row)
     crud.cursor.execute("SELECT * FROM expenses")
@@ -55,6 +55,7 @@ def refresh_treeview():
     btn_total_budget.config(text=f"Total Budget: {budget}")
 
 
+#functions for adding a record to the database
 def open_new_window_addrecord():
     new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Add New Record")
@@ -87,7 +88,7 @@ def open_new_window_addrecord():
     amount_entry = ttk.Entry(new_window, width=22, validate="key", validatecommand=vcmd)
     amount_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 
-    
+    #function to save the details entered in the new record window
     def saveDetails_add():
 
         expense_data = {
@@ -115,7 +116,7 @@ def open_new_window_addrecord():
             messagebox.showerror("Error", "S.No. already exists.")
             print("Error: S.No. already exists.")
 
-
+        #try-except block for error handling of database operations
         try:    
             crud.insertQuery(expense_data)  
             refresh_treeview()
@@ -131,6 +132,8 @@ def open_new_window_addrecord():
     ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy()), style="TButton").grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy, style="TButton").grid(row=5, column=1, pady=10, padx=10)
 
+
+#function for updating the budget
 def update_budget():
 
     def save_budget():
@@ -169,6 +172,7 @@ def update_budget():
     ttk.Button(new_window_budget, text="Save", command=save_budget, style="TButton").grid(row=1, column=0, pady=5, padx=5)
 
 
+#function to delete a record in the database
 def deleteRecord():
     selected_item = tview.focus()
     if not selected_item:
@@ -192,6 +196,7 @@ def deleteRecord():
 
 
 
+#function new window to edit a record
 def open_new_window_editrecord():
     new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Edit Existing Record")
@@ -223,7 +228,7 @@ def open_new_window_editrecord():
     ttk.Button(new_window, text="Submit", command = lambda: (updateData(), new_window.destroy())).grid(row=4, column=0, columnspan=2, pady=20)
     
 
-
+    #function to edit an existing record in the database
     def updateData():
    
         selected_item = tview.focus()
@@ -295,7 +300,7 @@ def open_new_window_editrecord():
 
    
 
-
+#Main window labels and buttons
 btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
@@ -337,13 +342,9 @@ tview.column('Amount', width=200, anchor='center')
 
 
 
-for record in dtbcount:
-    tview.insert(parent='', index='end', values=(record[0], record[1], record[2], record[3], "☐"))
 
 
 
 
 
 root.mainloop()
-
-input("Press Enter to exit...")
