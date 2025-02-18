@@ -43,6 +43,12 @@ def readData():
     
     return records
 
+def readData_id():
+    select_query = "SELECT exp_id FROM expenses"
+    cursor.execute(select_query)
+    records = cursor.fetchall()
+    return records
+
 
 def updateData():
 
@@ -102,3 +108,4 @@ def displayCount():
     cursor.execute(dis_count)
     result = cursor.fetchone()
     return int(result[0]) if result[0] is not None else 0
+

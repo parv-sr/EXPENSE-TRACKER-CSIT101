@@ -27,8 +27,8 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#1E1E2E")
 frame1.pack(fill="both", expand=True)
 
-budget = (0)
-ex = crud.displaySum()
+budget = crud.displaySum_budget()
+ex = crud.displaySum_expenses()
 
 
 for i in range(6):
@@ -105,8 +105,8 @@ def open_new_window_addrecord():
         refresh_treeview()
     
     
-    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
-    ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
+    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=5)
+    ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=5)
 
 def update_budget():
     
@@ -138,9 +138,9 @@ def update_budget():
     new_window.title("Set Budget")
     new_window.geometry("300x150")
 
-    ttk.Label(new_window, text="Enter New Budget:", background="#1E1E2E", foreground="98FF98", font=("Segoe UI", 14, "bold")).grid(row=0, column=0, padx=20, pady=20, sticky="w")
+    ttk.Label(new_window, text="Enter New Budget:", background="#1E1E2E", foreground="98FF98", font=("Segoe UI", 14, "bold")).grid(row=0, column=0, padx=10, pady=10, sticky="w")
     new_budget_entry = ttk.Entry(new_window, width=20)
-    new_budget_entry.grid(row=0, column=1, padx=10, pady=20)
+    new_budget_entry.grid(row=0, column=1, padx=10, pady=10)
 
     ttk.Button(new_window, text="Save", command=save_budget, background="#1E1E2E", foreground="98FF98", font=("Segoe UI", 14, "bold")).grid(row=1, column=0, columnspan=2, pady=10)
 
@@ -278,7 +278,7 @@ def open_new_window_editrecord():
 btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
-lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget - ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 lbl_remaining_budget.grid(row=0, column=1, sticky="nsew")
 
 lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")

@@ -27,6 +27,9 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#1E1E2E")
 frame1.pack(fill="both", expand=True)
 
+style = ttk.Style()
+style.configure("TButton", background="#1E1E2E", foreground="#98FF98", font=("Segoe UI", 14, "bold"))
+
 budget = crud.displaySum_budget()
 ex = crud.displaySum_expenses()
 
@@ -43,11 +46,19 @@ def refresh_treeview():
     for row in rows:
         tview.insert("", "end", values = row)
 
+    global budget, ex
+    budget = crud.displaySum_budget()
+    ex = crud.displaySum_expenses()
+
+    lbl_remaining_budget.config(text=f"Remaining Budget: {budget - ex}")
+    lbl_total_expense.config(text=f"Total Expense: {ex}")
+    btn_total_budget.config(text=f"Total Budget: {budget}")
+
 
 def open_new_window_addrecord():
-    new_window = tk.Toplevel(root, bg="#454746")
+    new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Add New Record")
-    new_window.geometry("300x200")
+    new_window.geometry("350x250")
 
     def validate_integer_input(int_val_amt):   #this functions allows for strictly integer input
         if int_val_amt == "":
@@ -56,26 +67,25 @@ def open_new_window_addrecord():
     
     vcmd = (new_window.register(validate_integer_input), "%P")
 
-    ttk.Label(new_window, text="Enter Details").grid(row=0, padx=10, pady=5, columnspan=2)
+    ttk.Label(new_window, text="Enter Details", font=("Segoe UI", 14, "bold"), background="#1E1E2E", foreground="#98FF98").grid(row=0, column=0, columnspan=2, pady=10)
 
-    ttk.Label(new_window, text="S.No.: ").grid(row=1, column=0, padx=20, pady=5, sticky="w")
-    sno_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    sno_entry.grid(row=1, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="S.No.:", background="#1E1E2E", foreground="#98FF98").grid(row=1, column=0, padx=10, pady=5, sticky="e")
+    sno_entry = ttk.Entry(new_window, width=22, validate="key", validatecommand=vcmd)
+    sno_entry.grid(row=1, column=1, padx=10, pady=5, sticky="w")
 
-    ttk.Label(new_window, text="Date: ").grid(row=2, column=0, padx=20, pady=5, sticky="w")
-    date_entry = DateEntry(new_window, width=20)
-    date_entry.grid(row=2, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Date:", background="#1E1E2E", foreground="#98FF98").grid(row=2, column=0, padx=10, pady=5, sticky="e")
+    date_entry = DateEntry(new_window, width=19)
+    date_entry.grid(row=2, column=1, padx=10, pady=5, sticky="w")
 
-    ttk.Label(new_window, text="Category:").grid(row=3, column=0, padx=20, pady=5, sticky="w")
+    ttk.Label(new_window, text="Category:", background="#1E1E2E", foreground="#98FF98").grid(row=3, column=0, padx=10, pady=5, sticky="e")
     categories = ["Food", "Travel", "Rent", "Utilities", "Entertainment"]
-    category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=18)
-    category_dropdown.grid(row=3, column=1, padx=10, pady=5)
+    category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=20)
+    category_dropdown.grid(row=3, column=1, padx=10, pady=5, sticky="w")
     category_dropdown.set("Select a category")
 
-
-    ttk.Label(new_window, text="Amount:").grid(row=4, column=0, padx=20, pady=5, sticky="w")
-    amount_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    amount_entry.grid(row=4, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Amount:", background="#1E1E2E", foreground="#98FF98").grid(row=4, column=0, padx=10, pady=5, sticky="e")
+    amount_entry = ttk.Entry(new_window, width=22, validate="key", validatecommand=vcmd)
+    amount_entry.grid(row=4, column=1, padx=10, pady=5, sticky="w")
 
     
     def saveDetails_add():
@@ -88,29 +98,41 @@ def open_new_window_addrecord():
         }
 
         if not expense_data["exp_id"]:
+            messagebox.showerror("Error", "S.No. cannot be empty.")
             print("Error: S.No. cannot be empty.")
             return
         if not expense_data["category"] or expense_data["category"] == "Select a category":
+            messagebox.showerror("Error", "Please select a valid category.")
             print("Error: Please select a valid category.")
             return
         if expense_data["expenses"] <= 0:
+            messagebox.showerror("Error", "Amount must be greater than 0.")
             print("Error: Amount must be greater than 0.")
             return
+        
+        existing_ids = [record[0] for record in crud.readData_id()]
+        if expense_data["exp_id"] in existing_ids:
+            messagebox.showerror("Error", "S.No. already exists.")
+            print("Error: S.No. already exists.")
+
 
         try:    
             crud.insertQuery(expense_data)  
+            refresh_treeview()
             print("Record successfully added!")
+            messagebox.showinfo("Success", "Record successfully added!")
         except Exception as e:
             print(f"Error while adding record: {e}")
+            messagebox.showerror("Error", f"An error occurred: {e}")
 
         refresh_treeview()
     
     
-    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
-    ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
+    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_add(), new_window.destroy()), style="TButton").grid(row=5, column=0, pady=10, padx=10)
+    ttk.Button(new_window, text="Cancel", command=new_window.destroy, style="TButton").grid(row=5, column=1, pady=10, padx=10)
 
 def update_budget():
-    
+
     def save_budget():
         
         nonlocal new_budget_entry
@@ -130,21 +152,22 @@ def update_budget():
                 return
 
 
-            lbl_remaining_budget.config(text=f"Remaining Budget: {budget - ex}")
-            btn_total_budget.config(text=f"Total Budget: {budget}")
-            new_window.destroy()
+            refresh_treeview()
+            new_window_budget.destroy()
         except ValueError:
             messagebox.showerror("Invalid Input", "Please enter a valid positive integer for the budget.")
+    
 
-    new_window = tk.Toplevel(root, bg="#454746")
-    new_window.title("Set Budget")
-    new_window.geometry("300x150")
+    new_window_budget = tk.Toplevel(root, bg="#1E1E2E")
+    new_window_budget.title("Set Budget")
+    new_window_budget.geometry("300x100")
 
-    ttk.Label(new_window, text="Enter New Budget:", background="#454746", foreground="white").grid(row=0, column=0, padx=20, pady=20, sticky="w")
-    new_budget_entry = ttk.Entry(new_window, width=20)
-    new_budget_entry.grid(row=0, column=1, padx=10, pady=20)
+    ttk.Label(new_window_budget, text="Enter New Budget:", background="#1E1E2E", foreground="#98FF98", font=("Segoe UI", 14, "bold")).grid(row=0, column=0, padx=5, pady=5, sticky="w")
+    
+    new_budget_entry = ttk.Entry(new_window_budget, width=10)
+    new_budget_entry.grid(row=0, column=1, padx=5, pady=5)
+    ttk.Button(new_window_budget, text="Save", command=save_budget, style="TButton").grid(row=1, column=0, pady=5, padx=5)
 
-    ttk.Button(new_window, text="Save", command=save_budget).grid(row=1, column=0, columnspan=2, pady=10)
 
 def deleteRecord():
     selected_item = tview.focus()
@@ -170,9 +193,9 @@ def deleteRecord():
 
 
 def open_new_window_editrecord():
-    new_window = tk.Toplevel(root, bg="#454746")
+    new_window = tk.Toplevel(root, bg="#1E1E2E")
     new_window.title("Edit Existing Record")
-    new_window.geometry("300x200")
+    new_window.geometry("300x250")
 
     def validate_integer_input(int_val_amt):   #this functions allows for strictly integer input
         if int_val_amt == "":
@@ -181,23 +204,24 @@ def open_new_window_editrecord():
     
     vcmd = (new_window.register(validate_integer_input), "%P")
 
-    ttk.Label(new_window, text="Enter Details").grid(row=0, padx=10, pady=5, columnspan=2)
+    ttk.Label(new_window, text="Enter Details", font=("Segoe UI", 12, "bold"), background="#1E1E2E", foreground="#FFFFFF").grid(row=0, column=0, columnspan=2, pady=15)
 
-    ttk.Label(new_window, text="Date: ").grid(row=2, column=0, padx=20, pady=5, sticky="w")
-    date_entry = DateEntry(new_window, width=20)
-    date_entry.grid(row=2, column=1, padx=10, pady=5)
+    ttk.Label(new_window, text="Date:", background="#1E1E2E", foreground="#FFFFFF").grid(row=1, column=0, padx=20, pady=10, sticky="e")
+    date_entry = DateEntry(new_window, width=20, background="#3EB489", foreground="#000000")
+    date_entry.grid(row=1, column=1, padx=10, pady=10, sticky="w")
 
-    ttk.Label(new_window, text="Category:").grid(row=3, column=0, padx=20, pady=5, sticky="w")
+    ttk.Label(new_window, text="Category:", background="#1E1E2E", foreground="#FFFFFF").grid(row=2, column=0, padx=20, pady=10, sticky="e")
     categories = ["Food", "Travel", "Rent", "Utilities", "Entertainment"]
     category_dropdown = ttk.Combobox(new_window, values=categories, state="readonly", width=18)
-    category_dropdown.grid(row=3, column=1, padx=10, pady=5)
+    category_dropdown.grid(row=2, column=1, padx=10, pady=10, sticky="w")
     category_dropdown.set("Select a category")
 
+    ttk.Label(new_window, text="Amount:", background="#1E1E2E", foreground="#FFFFFF").grid(row=3, column=0, padx=20, pady=10, sticky="e")
+    amount_entry = ttk.Entry(new_window, width=20, validate="key", validatecommand=vcmd)
+    amount_entry.grid(row=3, column=1, padx=10, pady=10, sticky="w")
 
-    ttk.Label(new_window, text="Amount:").grid(row=4, column=0, padx=20, pady=5, sticky="w")
-    amount_entry = ttk.Entry(new_window, width=20, validate = "key", validatecommand = vcmd)
-    amount_entry.grid(row=4, column=1, padx=10, pady=5)
-
+    ttk.Button(new_window, text="Submit", command = lambda: (updateData(), new_window.destroy())).grid(row=4, column=0, columnspan=2, pady=20)
+    
 
 
     def updateData():
@@ -206,20 +230,19 @@ def open_new_window_editrecord():
       
         if not selected_item:
             print("Error: No record selected!")
+            messagebox.showwarning("Warning!", "No record selected!")
             return
 
-         # Get the exp_id from the selected row
         values = tview.item(selected_item, 'values')
-        exp_id = values[0]  # Assuming exp_id is at index 0
+        exp_id = values[0]  
 
-        # Gather new values from GUI elements
         edit_data = {
             "date": date_entry.get_date().strftime("%Y-%m-%d"),  
             "category": category_dropdown.get(), 
             "expenses": int(amount_entry.get()) if amount_entry.get().isdigit() else 0  
-    }
+        }
 
-    # Input validation
+
         if not edit_data["category"] or edit_data["category"] == "Select a category":
             print("Error: Please select a valid category.")
             return
@@ -227,17 +250,13 @@ def open_new_window_editrecord():
             print("Error: Amount must be greater than 0.")
             return
         
-        print("xxxxxxxxxxxxxxxxxxxx")
 
         try:
-            # Update the existing record in the database
             crud.cursor.execute(
                 "UPDATE expenses SET date = %s, category = %s, expenses = %s WHERE exp_id = %s",
                 (edit_data["date"], edit_data["category"], edit_data["expenses"], exp_id)
             )
             connection.commit()
-
-            # Refresh the Treeview to reflect the changes
             refresh_treeview()
 
             print(f"Record ID {exp_id} successfully updated!")
@@ -274,15 +293,13 @@ def open_new_window_editrecord():
 
 
 
-    ttk.Button(new_window, text="Save", command = lambda: (updateData(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
-    ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
    
 
 
 btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
-lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Money: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Money: {budget - ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 lbl_remaining_budget.grid(row=0, column=1, sticky="nsew")
 
 lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
