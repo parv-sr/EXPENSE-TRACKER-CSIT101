@@ -84,11 +84,18 @@ def deleteQuery():
 
 
 
-def displaySum():
+def displaySum_expenses():
     dis_sum = "SELECT SUM(expenses) FROM expenses;"
     cursor.execute(dis_sum)
     result = cursor.fetchone()
     return int(result[0]) if result[0] is not None else 0
+
+def displaySum_budget():
+    dis_sum = "SELECT SUM(budget) FROM expenses WHERE exp_id = 1;"
+    cursor.execute(dis_sum)
+    result = cursor.fetchone()
+    return int(result[0]) if result[0] is not None else 0
+
 
 def displayCount():
     dis_count = "SELECT COUNT(expenses) from expenses;"

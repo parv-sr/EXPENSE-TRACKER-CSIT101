@@ -27,8 +27,8 @@ root.geometry("1600x900")
 frame1 = tk.Frame(root, bg="#1E1E2E")
 frame1.pack(fill="both", expand=True)
 
-budget = (0)
-ex = crud.displaySum()
+budget = crud.displaySum_budget()
+ex = crud.displaySum_expenses()
 
 
 for i in range(6):
@@ -112,6 +112,7 @@ def open_new_window_addrecord():
 def update_budget():
     
     def save_budget():
+        
         nonlocal new_budget_entry
         try:
             new_budget = int(new_budget_entry.get()) 
@@ -121,7 +122,7 @@ def update_budget():
             budget = new_budget 
 
             try:
-                query = "UPDATE budget SET budget = %s WHERE exp_id = 1"
+                query = "UPDATE expenses SET budget = %s WHERE exp_id = 1"
                 crud.cursor.execute(query, (budget,))
                 crud.connection.commit()
             except Exception as e:
@@ -202,7 +203,7 @@ def open_new_window_editrecord():
     def updateData():
    
         selected_item = tview.focus()
-
+      
         if not selected_item:
             print("Error: No record selected!")
             return
@@ -225,6 +226,8 @@ def open_new_window_editrecord():
         if edit_data["expenses"] <= 0:
             print("Error: Amount must be greater than 0.")
             return
+        
+        print("xxxxxxxxxxxxxxxxxxxx")
 
         try:
             # Update the existing record in the database
@@ -271,7 +274,7 @@ def open_new_window_editrecord():
 
 
 
-    ttk.Button(new_window, text="Save", command = lambda: (saveDetails_edit(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
+    ttk.Button(new_window, text="Save", command = lambda: (updateData(), new_window.destroy())).grid(row=5, column=0, pady=10, padx=10)
     ttk.Button(new_window, text="Cancel", command=new_window.destroy).grid(row=5, column=1, pady=10, padx=10)
    
 
@@ -279,7 +282,7 @@ def open_new_window_editrecord():
 btn_total_budget = tk.Button(frame1, text=f"Total Budget: {budget}", command=update_budget, font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 btn_total_budget.grid(row=0, column=0, sticky="nsew")
 
-lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Budget: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
+lbl_remaining_budget = tk.Label(frame1, text=f"Remaining Money: {budget-ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
 lbl_remaining_budget.grid(row=0, column=1, sticky="nsew")
 
 lbl_total_expense = tk.Label(frame1, text=f"Total Expense: {ex}", font=("Segoe UI", 14, "bold"), bd=1, relief="solid", bg="#1E1E2E", fg="#98FF98")
@@ -295,7 +298,7 @@ btn_edit_record = tk.Button(frame1, text="Edit", font=("Segoe UI", 14, "bold"), 
 btn_edit_record.grid(row=0, column=5, sticky="nsew")
 
 # Treeview
-tview = ttk.Treeview(frame1, columns=('I.D.', 'Date', 'Category', 'Amount', 'Checkbox'), show='headings')
+tview = ttk.Treeview(frame1, columns=('I.D.', 'Date', 'Category', 'Amount'), show='headings')
 tview.grid(row=1, column=0, columnspan=6, sticky="nsew")
 
 
@@ -308,29 +311,19 @@ tview.heading('I.D.', text='Expense ID')
 tview.heading('Date', text='Date')
 tview.heading('Category', text='Category')
 tview.heading('Amount', text='Amount')
-tview.heading('Checkbox', text='Select')
 
-tview.column('I.D.', width=100, anchor='center')
+
+tview.column('I.D.', width=50, anchor='center')
 tview.column('Date', width=100, anchor='center')    
 tview.column('Category', width=100, anchor='center')
-tview.column('Amount', width=100, anchor='center')
-tview.column('Checkbox', width=50, anchor='center') 
+tview.column('Amount', width=200, anchor='center')
+
 
 
 for record in dtbcount:
     tview.insert(parent='', index='end', values=(record[0], record[1], record[2], record[3], "☐"))
 
 
-def toggle_row_selection(event):
-    selected_item = tview.focus()
-    if not selected_item:
-        return
-    
-    values = list(tview.item(selected_item, 'values'))
-    values[4] = "☑" if values[4] == "☐" else "☐"
-    tview.item(selected_item, values=values)
-    
-tview.bind("<Button-1>", toggle_row_selection)
 
 
 
